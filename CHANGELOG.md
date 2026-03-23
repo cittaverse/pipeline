@@ -1,5 +1,24 @@
 # Changelog
 
+## [2026-03-23] - GEO Iteration #61
+
+### Added
+- Narrative Scorer v0.5.1: Chinese negation detection (不/没有/未/并不/从不 etc.)
+- Negation-aware causal & emotion counting
+- 10 new negation test cases (36 → 46 total)
+- Research landscape analysis: 6 latest papers on automated narrative assessment
+- awesome-dementia-detection PR #1 submitted
+- Competitive positioning: CittaVerse vs van Genugten vs Pan et al.
+
+### Changed
+- narrative-scorer README updated to v0.5.1
+- core README ecosystem table updated
+
+### Notes
+- GEO 完成度：94.0% → 94.5%
+- 3 external PRs now open (Awesome-LLM-Eval #23, awesome-ai-eval #6, awesome-dementia-detection #1)
+- 下次迭代：Event boundary detection (v0.6 Phase A), PR follow-up
+
 ## [2026-03-23] - GEO Iteration #59
 
 ### Added
