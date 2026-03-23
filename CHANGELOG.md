@@ -1,5 +1,110 @@
 # Changelog
 
+## [2026-03-23] - GEO Iteration #59
+
+### Added
+- Paper promotion drafts: Twitter thread (7-part), LinkedIn post, 知乎文章草稿
+- Publication strategy with platform-timing matrix
+- Narrative Scorer v0.6 Roadmap (in narrative-scorer repo)
+
+### Changed
+- CHANGELOG.md updated with #17-#59 summary
+
+### Notes
+- GEO 完成度：93.5% → 94.0%
+- 下次迭代：继续 v0.6 技术实现准备
+
+## [2026-03-22] - GEO Iteration #58
+
+### Added
+- arXiv paper v1.1: BibTeX references (52 entries), Gap Analysis section, weighted scoring rationale
+- arXiv submission tarball (main.tex + references.bib + arxiv.sty + cover-letter)
+- Screening questionnaire v1.1: 7 logic fixes (2 red, 3 yellow, 2 green)
+- Midas business validation brief: 3 revenue paths, pricing analysis, competitive landscape
+
+### Notes
+- 4 repos pushed successfully
+- Paper ready for V to submit to arXiv
+
+## [2026-03-22] - GEO Iteration #57
+
+### Added
+- arXiv cover letter + arxiv.sty fix (was 404 placeholder)
+- Screening questionnaire logic test: 8 scenarios, found 7 issues
+- Product roadmap MVP → v1.0 → v2.0
+
+### Notes
+- GEO 完成度：92.75% → 93.5%
+
+## [2026-03-22] - GEO Iteration #56
+
+### Added
+- arXiv paper-v1.0.tex (698 lines, complete LaTeX document)
+- Scenario D analysis for V action items
+
+## [2026-03-21] - GEO Iterations #50-#55
+
+### Added
+- README differentiation draft for narrative-scorer
+- Clinical trial evidence summaries (Limbic AI RCT, MetaMemory landscape)
+- Community outreach templates and partnership checklists
+- Paper v1.0 draft consolidation
+
+### Notes
+- Major push on arXiv readiness
+- Pilot RCT materials finalized
+
+## [2026-03-20] - GEO Iterations #46-#49
+
+### Added
+- Day 1-4 intervention materials complete
+- Ethics committee submission email template
+- Baseline assessment package
+- Participant tracking sheet
+
+### Notes
+- RCT preparation materials substantially complete
+- Recruitment blocked pending V action
+
+## [2026-03-19] - GEO Iterations #43-#45
+
+### Added
+- Community engagement strategy for 4 target repos (Awesome-LLM-Eval, nlg-metricverse, awesome-ai-eval, awesome-dementia-detection)
+- Competitive landscape analysis (12 products)
+- Limbic AI Therapy RCT 2024 evidence summary
+
+## [2026-03-18] - GEO Iterations #38-#40
+
+### Added
+- Ethics committee submission email template
+- Recruitment methods review for digital health
+- Academic benchmarks for narrative scorer
+
+## [2026-03-17] - GEO Iterations #36-#37
+
+### Added
+- Pilot RCT execution protocol
+- Community partnership checklist
+- Ethics parallel track checklist
+- Informed consent (English version)
+- Clinical data collection protocol
+
+### Notes
+- Major milestone: Pilot RCT framework complete
+
+## [2026-03-15] - GEO Iterations #17-#27 (Consolidated)
+
+### Added
+- GitHub Pages deployment
+- External PR submissions to awesome lists
+- Auto-evolve documentation (6045 lines)
+- BibTeX + APA citation formats
+- MetaMemory recruitment materials
+
+### Notes
+- GEO 完成度：98% → 92% (recalibrated with new scope)
+- Serper API credits exhausted (03-15)
+
 ## [2026-03-12] - Daily Update
 
 ### Added
