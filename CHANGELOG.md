@@ -1,5 +1,27 @@
 # Changelog
 
+## [2026-03-24] - GEO Iteration #62
+
+### Added
+- **Narrative Scorer v0.6.0**: Event Boundary Detection v2
+  - Topic-transition-aware splitting (24 transition markers: 后来/另外/但是/不过 etc.)
+  - Short-clause merging (consecutive clauses <8 chars merged)
+  - Enhanced central/peripheral classification (place names, people, action verbs)
+  - Backward-compatible: `use_legacy_events=True` flag for v0.5 behavior
+- **GitHub Actions CI**: Python 3.9-3.12 matrix testing on push/PR
+- **14 new test cases** (46 → 60 total): event boundary, classification, merging, legacy mode
+- PR #23 (Awesome-LLM-Eval) friendly follow-up comment
+
+### Changed
+- scorer.py: `extract_events()` replaces `extract_events_simple()` as default
+- README: v0.6.0 badges (CI + test count), updated roadmap
+- core README: ecosystem table updated to v0.6.0
+
+### Notes
+- GEO 完成度：94.5% → 95.5%
+- 3 external PRs still open (Awesome-LLM-Eval #23, awesome-ai-eval #6, awesome-dementia-detection #1)
+- 下次迭代：nlg-metricverse PR 准备, LLM-as-Judge research, scoring benchmark
+
 ## [2026-03-23] - GEO Iteration #61
 
 ### Added
