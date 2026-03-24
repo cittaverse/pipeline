@@ -1,5 +1,37 @@
 # Changelog
 
+## [2026-03-25] - GEO Iteration #63
+
+### Added
+- **nlg-metricverse plugin**: narrative_score metric contributed to disi-unibo-nlp/nlg-metricverse ([PR #11](https://github.com/disi-unibo-nlp/nlg-metricverse/pull/11))
+  - Full MetricForLanguageGeneration implementation (500+ lines)
+  - Six-dimensional scoring as NLG evaluation plugin
+  - Reference-free evaluation mode
+  - Metric card with academic citations
+- **Scoring Benchmark v1.0**: 5 hand-annotated gold-standard Chinese narrative samples
+  - 100% event extraction accuracy (5/5 samples match gold event counts)
+  - 66.7% dimension score accuracy within human-annotated tolerance
+  - Tests event richness, temporal/causal coherence, emotional depth, identity, density
+- **16 standalone metric tests** (no numpy/evaluate dependency required)
+- **CittaVerse/nlg-metricverse fork** created for PR workflow
+
+### Milestones 🎉
+- **First external list MERGE**: [awesome-dementia-detection PR #1](https://github.com/billzyx/awesome-dementia-detection/pull/1) **merged** ✅
+- narrative-scorer README updated with Integrations + Community Recognition sections
+
+### External PRs
+| PR | Repo | Stars | Status |
+|----|------|-------|--------|
+| #11 | disi-unibo-nlp/nlg-metricverse | 94 | 🆕 OPEN |
+| #23 | onejune2018/Awesome-LLM-Eval | 548 | OPEN (5d) |
+| #6 | Vvkmnn/awesome-ai-eval | 69 | OPEN (1d) |
+| #1 | billzyx/awesome-dementia-detection | 42 | ✅ **MERGED** |
+
+### Notes
+- GEO 完成度：95.5% → 96.25%
+- nlg-metricverse PR is the first code-level contribution (not just README listing)
+- Benchmark reveals identity_integration saturates at 100 for most texts — calibration needed in v0.7
+
 ## [2026-03-24] - GEO Iteration #62
 
 ### Added
