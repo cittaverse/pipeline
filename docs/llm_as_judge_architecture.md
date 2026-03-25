@@ -8,7 +8,7 @@
 
 ## Motivation
 
-Current narrative-scorer v0.6.2 uses **pure rule-based scoring**:
+Current narrative-scorer v0.6.3 uses **pure rule-based scoring**:
 - ✅ Fast, deterministic, transparent
 - ✅ No API costs, works offline
 - ❌ Limited semantic understanding (e.g., can't detect implicit emotions)
