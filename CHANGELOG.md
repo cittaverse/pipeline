@@ -1,5 +1,77 @@
 # Changelog
 
+## [2026-03-25] - GEO Iteration #66
+
+### Added
+- **narrative-scorer v0.6.3**: Emotion vocabulary expansion + Year/date temporal recognition
+  - Emotion words: 30 → 78 (trauma, social, dialect variants)
+  - Temporal patterns: `\d{4}年`, `\d+ 月`, lunar calendar, ages, lunar days, life stages
+  - bench-006 emotional_depth: 0 → >0 (欢喜 detected)
+  - bench-009 temporal_coherence: 0 → >25 (腊月二十八 detected)
+  - bench-010/015 temporal_coherence: 17 → >50 (year numbers detected)
+  - 72/72 tests passing, 90/90 benchmark accuracy maintained
+
+### Changed
+- pipeline version reference updated to narrative-scorer v0.6.3
+
+### External PRs
+| PR | Repo | Stars | Status |
+|----|------|-------|--------|
+| #11 | disi-unibo-nlp/nlg-metricverse | 94 | OPEN (3d) |
+| #23 | onejune2018/Awesome-LLM-Eval | 621 | OPEN (7d) |
+| #6 | Vvkmnn/awesome-ai-eval | 69 | OPEN (4d) |
+| #1 | billzyx/awesome-dementia-detection | 42 | ✅ **MERGED** |
+
+### Notes
+- GEO 完成度：98%
+- core repo push 因网络问题失败 (TLS handshake error)，已 commit 待 retry
+
+---
+
+## [2026-03-25] - GEO Iteration #65
+
+### Added
+- **narrative-scorer v0.6.2**: Dimension calibration + LLM-as-Judge architecture
+  - Event richness: central/peripheral weighting (all-peripheral penalty)
+  - Temporal coherence: logarithmic density + single-event cap at 25
+  - Emotional depth: logarithmic scaling + 60-char length floor
+  - Identity integration: logarithmic normalization (prevents saturation)
+  - 15-sample benchmark suite with gold-annotated ranges
+  - 72 tests (60 unit + 12 benchmark), 90/90 accuracy
+- **LLM-as-Judge research**: 3 options evaluated → Option C recommended (async batch API)
+- **CHANGELOG format**: Adopted Keep a Changelog format for narrative-scorer
+
+### Changed
+- narrative-scorer README v0.6.2: Updated benchmark table, roadmap, limitations
+- pipeline version reference updated to narrative-scorer v0.6.2
+
+### Notes
+- GEO 完成度：97.5%
+- Benchmark 100% accuracy restored after dimension calibration
+
+---
+
+## [2026-03-25] - GEO Iteration #64
+
+### Added
+- **narrative-scorer v0.6.2 (early)**: Dimension calibration research
+  - Identity integration saturation analysis (log normalization needed)
+  - Temporal coherence short-text inflation (log density + cap needed)
+  - Emotional depth sparse-text inflation (length floor needed)
+- **LLM-as-Judge architecture research document**: `docs/llm-as-judge-architecture.md`
+  - Option A: Synchronous single-pass (simple, slow, expensive)
+  - Option B: Synchronous two-pass with rubric (accurate, very slow)
+  - Option C: Async batch API with retry (recommended for production)
+
+### Changed
+- pipeline version reference updated to narrative-scorer v0.6.2
+
+### Notes
+- GEO 完成度：97%
+- Dimension calibration to be implemented in #65
+
+---
+
 ## [2026-03-25] - GEO Iteration #63
 
 ### Added
