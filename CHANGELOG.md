@@ -1,6 +1,34 @@
 # Changelog
 
-## [2026-03-25] - GEO Iteration #66
+## [2026-03-26] - GEO Iteration #68
+
+### Added
+- **narrative-scorer v0.6.4**: Emotion vocabulary final audit + Benchmark expansion
+  - Emotion words: 82 → 90 (+8: 哭，笑，微笑，心疼，牵挂，疼爱，暖和，担心)
+  - Benchmark samples: 15 → 18 (+3: dialogue, code-switching, high emotional density)
+  - 72/72 tests passing, 108/108 benchmark accuracy (100%)
+  - bench-003/013/015 emotional_depth improved (basic expressions now detected)
+
+### Changed
+- pipeline version reference updated to narrative-scorer v0.6.4
+- Cross-repo README descriptions updated (90 词，含基本情感表达 + 亲情词)
+
+### External PRs
+| PR | Repo | Stars | Status |
+|----|------|-------|--------|
+| #11 | disi-unibo-nlp/nlg-metricverse | 94 | OPEN (5d) — approaching 7d follow-up threshold |
+| #23 | onejune2018/Awesome-LLM-Eval | 621 | OPEN (9d) |
+| #6 | Vvkmnn/awesome-ai-eval | 69 | OPEN (6d) |
+| #1 | billzyx/awesome-dementia-detection | 42 | ✅ **MERGED** |
+
+### Notes
+- GEO 完成度：99%
+- Emotion vocabulary final audit complete (90 words across 10+ categories)
+- PR #11: 7-day threshold approaching (03-28) — prepare friendly follow-up
+
+---
+
+## [2026-03-25] - GEO Iteration #67
 
 ### Added
 - **narrative-scorer v0.6.3**: Emotion vocabulary expansion + Year/date temporal recognition
