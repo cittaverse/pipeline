@@ -1,8 +1,9 @@
 # Wrapper Layer Implementation Plan
 
 **Created**: 2026-03-28 (GEO #76)
-**Status**: Skeleton Complete — Implementation Pending
+**Status**: Skeleton Complete — Blocked on DASHSCOPE_API_KEY (401 Error)
 **Parent**: [scorer-migration-phase1.md](../core/docs/scorer-migration-phase1.md)
+**Last Updated**: 2026-03-29 (GEO #78)
 
 ---
 
@@ -32,6 +33,13 @@ This document tracks the implementation of the `narrative_scorer_wrapper.py` lay
 
 ### Pending (Blocked by DASHSCOPE_API_KEY)
 
+**Blocker Update (GEO #78, 2026-03-29)**:
+- DASHSCOPE_API_KEY present in environment but returns **401 Authentication Error**
+- Key format: `sk-sp-4bad5c0618764aa5a52740dcc995421a` (appears valid)
+- Root cause: Key expired/revoked on Alibaba Cloud side, or never activated
+- Duration: >360 hours (15+ days)
+- Impact: Live LLM testing impossible; Phase 1 integration blocked
+
 - [ ] Integrate narrative-scorer v0.7.0 from PyPI
 - [ ] Implement fallback to local `narrative_scorer_v0.4.py`
 - [ ] Add async batch scoring support
@@ -39,6 +47,8 @@ This document tracks the implementation of the `narrative_scorer_wrapper.py` lay
 - [ ] Add monitoring hooks (latency, error rate, cost)
 - [ ] Write unit tests (mocked LLM)
 - [ ] Write integration tests (live LLM)
+
+**Workaround**: Development can proceed with mocked tests only. Production deployment requires valid API key.
 
 ---
 
