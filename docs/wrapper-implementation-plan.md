@@ -1,9 +1,9 @@
 # Wrapper Layer Implementation Plan
 
 **Created**: 2026-03-28 (GEO #76)
-**Status**: Skeleton Complete — Blocked on DASHSCOPE_API_KEY (401 Error)
+**Status**: Phase 1 Partial — REMem Event Segmentation Complete, LLM Integration Blocked
 **Parent**: [scorer-migration-phase1.md](../core/docs/scorer-migration-phase1.md)
-**Last Updated**: 2026-03-29 (GEO #78)
+**Last Updated**: 2026-04-02 (GEO #96)
 
 ---
 
@@ -19,7 +19,7 @@ This document tracks the implementation of the `narrative_scorer_wrapper.py` lay
 
 ---
 
-## Current State (2026-03-28)
+## Current State (2026-04-02)
 
 ### Completed
 
@@ -30,25 +30,38 @@ This document tracks the implementation of the `narrative_scorer_wrapper.py` lay
   - `NarrativeScorerService` class stub
   - `score_batch()` method stub
   - TODO checklist for Phase 1
+- [x] **`src/services/remem_event_segmenter.py`** (GEO #96, 2026-04-02)
+  - `EventSegmenter` class with rule-based boundary detection
+  - `segment_narrative()` convenience function
+  - Temporal anchor extraction
+  - Emotional valence scoring per segment
+  - People/place/theme extraction
+  - Tested with sample narrative (3 events detected)
+  - Ready for LLM integration (pending DASHSCOPE_API_KEY)
 
 ### Pending (Blocked by DASHSCOPE_API_KEY)
 
-**Blocker Update (GEO #78, 2026-03-29)**:
+**Blocker Update (GEO #96, 2026-04-02)**:
 - DASHSCOPE_API_KEY present in environment but returns **401 Authentication Error**
-- Key format: `sk-sp-4bad5c0618764aa5a52740dcc995421a` (appears valid)
-- Root cause: Key expired/revoked on Alibaba Cloud side, or never activated
-- Duration: >360 hours (15+ days)
-- Impact: Live LLM testing impossible; Phase 1 integration blocked
+- Duration: >636 hours (~26.5 days)
+- Impact: LLM-enhanced features unavailable; rule-based fallback working
 
-- [ ] Integrate narrative-scorer v0.7.0 from PyPI
+**Completed Without LLM**:
+- [x] REMem event segmentation (rule-based mode)
+- [x] Temporal anchor extraction
+- [x] Emotional valence scoring (keyword-based)
+
+**Still Blocked**:
+- [ ] Integrate narrative-scorer v0.7.0 from PyPI (requires API key for testing)
 - [ ] Implement fallback to local `narrative_scorer_v0.4.py`
+- [ ] LLM-based event segmentation (higher accuracy)
 - [ ] Add async batch scoring support
 - [ ] Add caching layer (Redis/memory)
 - [ ] Add monitoring hooks (latency, error rate, cost)
 - [ ] Write unit tests (mocked LLM)
 - [ ] Write integration tests (live LLM)
 
-**Workaround**: Development can proceed with mocked tests only. Production deployment requires valid API key.
+**Workaround**: Development can proceed with rule-based mode. Production LLM features require valid API key.
 
 ---
 
