@@ -5,10 +5,10 @@ Narrative Scorer Wrapper for Pipeline Services
 This wrapper provides a stable API for pipeline services,
 absorbing any breaking changes in the narrative-scorer library.
 
-Version: 1.1.0 (Phase 2 - WorkingMemory Integration)
+Version: 1.2.0 (Phase 3 - Semantic Memory Integration)
 Compatibility: narrative-scorer>=0.7.0,<0.8.0
 
-Status: IMPLEMENTED — WorkingMemory caching integrated (GEO #102)
+Status: IMPLEMENTED — WorkingMemory + SemanticMemory integrated (GEO #105)
 """
 
 from typing import Optional, Dict, Any
@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 
 # Import WorkingMemory for session-level caching
 from src.services.working_memory import WorkingMemory, get_working_memory
+
+# Import SemanticMemory for cross-session knowledge and statistics
+from src.services.semantic_memory import SemanticMemory, get_semantic_memory
 
 
 # Import from narrative-scorer library (pending v0.7.0 release)
@@ -83,20 +86,31 @@ class NarrativeScorerService:
     This service class provides:
     - Configuration management (LLM on/off, API key handling)
     - WorkingMemory caching for session-level performance
+    - SemanticMemory integration for cross-session statistics
+    - User-level trend analysis and percentile ranking
     - Logging and monitoring hooks
     - Batch scoring support
     - Error handling and fallback behavior
     
     Usage:
-        scorer = NarrativeScorerService(use_llm=True, session_id="sess_123")
+        scorer = NarrativeScorerService(
+            use_llm=True,
+            session_id="sess_123",
+            user_id="user_456",
+        )
         result = scorer.score("今天天气很好...")
         print(result['composite_score'])
         
         # Check cache stats
         stats = scorer.get_cache_stats()
         print(f"Cache hit rate: {stats['hit_rate']:.2%}")
+        
+        # Get user trends (requires SemanticMemory)
+        if scorer.semantic_memory:
+            user_stats = scorer.get_user_stats()
+            percentile = scorer.get_percentile_rank(result['composite_score'])
     
-    Status: IMPLEMENTED — WorkingMemory caching integrated (GEO #102)
+    Status: IMPLEMENTED — WorkingMemory + SemanticMemory integrated (GEO #105)
     """
     
     def __init__(
@@ -105,8 +119,11 @@ class NarrativeScorerService:
         api_key: Optional[str] = None,
         fallback_to_rule_only: bool = True,
         session_id: Optional[str] = None,
+        user_id: Optional[str] = None,
         enable_cache: bool = True,
         cache_ttl_seconds: int = 3600,
+        enable_semantic_memory: bool = True,
+        semantic_memory_db: Optional[str] = None,
     ):
         """
         Initialize the narrative scorer service.
@@ -116,20 +133,34 @@ class NarrativeScorerService:
             api_key: DashScope API key (optional, falls back to env var)
             fallback_to_rule_only: Fall back to rule-only if LLM fails (default: True)
             session_id: Session ID for WorkingMemory caching (optional)
+            user_id: User ID for SemanticMemory statistics (optional)
             enable_cache: Enable WorkingMemory caching (default: True)
             cache_ttl_seconds: TTL for cache entries (default: 1 hour)
+            enable_semantic_memory: Enable SemanticMemory integration (default: True)
+            semantic_memory_db: Path to SemanticMemory database (optional)
         """
         self.use_llm = use_llm
         self.api_key = api_key
         self.fallback_to_rule_only = fallback_to_rule_only
         self.enable_cache = enable_cache
         self.session_id = session_id
+        self.user_id = user_id
         
         # Initialize WorkingMemory if caching is enabled and session_id provided
         self.working_memory: Optional[WorkingMemory] = None
         if enable_cache and session_id:
             self.working_memory = get_working_memory(session_id, ttl_seconds=cache_ttl_seconds)
             logger.info(f"NarrativeScorerService initialized with WorkingMemory (session={session_id})")
+        
+        # Initialize SemanticMemory if enabled
+        self.semantic_memory: Optional[SemanticMemory] = None
+        if enable_semantic_memory:
+            try:
+                self.semantic_memory = get_semantic_memory(db_path=semantic_memory_db)
+                logger.info("NarrativeScorerService initialized with SemanticMemory")
+            except Exception as e:
+                logger.warning(f"Failed to initialize SemanticMemory: {e}")
+                self.semantic_memory = None
         
         if use_llm and LIBRARY_AVAILABLE:
             config = LLMConfig(
@@ -160,9 +191,9 @@ class NarrativeScorerService:
         key_data = f"{text}:{use_llm}"
         return f"score:{hashlib.md5(key_data.encode()).hexdigest()}"
     
-    def score(self, text: str) -> Dict[str, Any]:
+    def score(self, text: str, store_in_semantic: bool = True) -> Dict[str, Any]:
         """
-        Score a narrative with WorkingMemory caching.
+        Score a narrative with WorkingMemory caching and SemanticMemory persistence.
         
         Caching strategy:
         - Cache key: MD5 hash of (text + use_llm flag)
@@ -170,13 +201,19 @@ class NarrativeScorerService:
         - Cache hit: Return cached result immediately (<0.001ms)
         - Cache miss: Compute score, cache result, then return
         
+        Semantic Memory integration:
+        - After scoring, store result in SemanticMemory (if enabled)
+        - Enables cross-session statistics, trends, and percentile ranking
+        - Requires user_id to be set during initialization
+        
         Args:
             text: The narrative text to score
+            store_in_semantic: Store result in SemanticMemory (default: True)
         
         Returns:
             Dictionary with scores and metadata (see score_narrative)
         
-        Status: IMPLEMENTED — WorkingMemory caching integrated (GEO #102)
+        Status: IMPLEMENTED — WorkingMemory + SemanticMemory integrated (GEO #105)
         """
         # Check cache first if enabled
         if self.working_memory is not None:
@@ -197,6 +234,35 @@ class NarrativeScorerService:
             cache_key = self._compute_cache_key(text, self.use_llm)
             self.working_memory.set(cache_key, result)
             logger.debug(f"Cached scoring result (key={cache_key[:16]}...)")
+        
+        # Store in SemanticMemory if enabled and user_id is set
+        if store_in_semantic and self.semantic_memory is not None and self.user_id:
+            try:
+                session_id = self.session_id or "unknown"
+                scores = {
+                    'final_score': result.get('composite_score'),
+                    'coherence': result.get('narrative_coherence'),
+                    'emotional_richness': result.get('emotional_depth'),
+                    'narrative_depth': result.get('information_density'),
+                    'linguistic_complexity': result.get('identity_integration'),
+                    'authenticity': result.get('event_richness'),
+                    'temporal_structure': result.get('temporal_causal_coherence'),
+                    'confidence': result.get('metadata', {}).get('confidence', 0.8),
+                }
+                metadata = {
+                    'narrative_id': hashlib.md5(text.encode()).hexdigest()[:16],
+                    'session_id': session_id,
+                    'word_count': len(text),
+                }
+                self.semantic_memory.store_score(
+                    user_id=self.user_id,
+                    session_id=session_id,
+                    scores=scores,
+                    metadata=metadata,
+                )
+                logger.debug(f"Stored score in SemanticMemory (user={self.user_id})")
+            except Exception as e:
+                logger.warning(f"Failed to store score in SemanticMemory: {e}")
         
         return result
     
@@ -240,6 +306,134 @@ class NarrativeScorerService:
                 logger.error(f"Batch score {i+1}/{len(texts)} failed: {e}")
                 results.append({'error': str(e), 'index': i})
         return results
+    
+    # === SemanticMemory Integration Methods ===
+    
+    def get_user_stats(self) -> Optional[Dict[str, Any]]:
+        """
+        Get aggregated statistics for the current user.
+        
+        Requires:
+        - SemanticMemory enabled
+        - user_id set during initialization
+        
+        Returns:
+            Dictionary with user statistics:
+            {
+                'total_sessions': int,
+                'avg_final_score': float,
+                'avg_confidence': float,
+                'best_score': float,
+                'worst_score': float,
+                'score_std': float,
+                'last_session_at': datetime,
+            }
+            or None if SemanticMemory not available
+        """
+        if self.semantic_memory is None or not self.user_id:
+            return None
+        
+        return self.semantic_memory.get_user_stats(self.user_id)
+    
+    def get_user_trend(self, days: int = 30, granularity: str = "day") -> Optional[list[Dict[str, Any]]]:
+        """
+        Get time-series trend for the current user.
+        
+        Args:
+            days: Number of days to look back (default: 30)
+            granularity: "day", "week", or "month" (default: "day")
+        
+        Returns:
+            List of daily/weekly/monthly statistics:
+            [
+                {'date': '2026-04-01', 'avg_score': 0.75, 'session_count': 3},
+                ...
+            ]
+            or None if SemanticMemory not available
+        """
+        if self.semantic_memory is None or not self.user_id:
+            return None
+        
+        return self.semantic_memory.get_user_trend(self.user_id, days=days, granularity=granularity)
+    
+    def get_percentile_rank(self, score: float, reference_group: str = "general") -> Optional[float]:
+        """
+        Get percentile rank for a score against reference group.
+        
+        Args:
+            score: The score to rank (0-1)
+            reference_group: Reference group name (default: "general")
+        
+        Returns:
+            Percentile rank (0-100), or None if SemanticMemory not available
+        """
+        if self.semantic_memory is None:
+            return None
+        
+        return self.semantic_memory.get_percentile_rank(score, reference_group=reference_group)
+    
+    def get_calibration_params(self) -> Optional[Dict[str, Any]]:
+        """
+        Get calibration parameters for the current user.
+        
+        Returns:
+            Dictionary with calibration parameters:
+            {
+                'dimension_weights': {...},
+                'personal_baseline': float,
+                'sensitivity_factor': float,
+            }
+            or None if SemanticMemory not available
+        """
+        if self.semantic_memory is None or not self.user_id:
+            return None
+        
+        return self.semantic_memory.get_calibration_params(self.user_id)
+    
+    def set_calibration_params(
+        self,
+        dimension_weights: Optional[Dict[str, float]] = None,
+        personal_baseline: Optional[float] = None,
+        sensitivity_factor: Optional[float] = None,
+    ) -> bool:
+        """
+        Set calibration parameters for the current user.
+        
+        Args:
+            dimension_weights: Custom weights for score dimensions
+            personal_baseline: User's personal baseline score
+            sensitivity_factor: Sensitivity adjustment (default: 1.0)
+        
+        Returns:
+            True if successful, False otherwise
+        """
+        if self.semantic_memory is None or not self.user_id:
+            return False
+        
+        try:
+            self.semantic_memory.set_calibration_params(
+                user_id=self.user_id,
+                dimension_weights=dimension_weights,
+                personal_baseline=personal_baseline,
+                sensitivity_factor=sensitivity_factor,
+            )
+            return True
+        except Exception as e:
+            logger.error(f"Failed to set calibration params: {e}")
+            return False
+    
+    def get_semantic_memory_stats(self) -> Optional[Dict[str, Any]]:
+        """
+        Get SemanticMemory database statistics.
+        
+        Returns:
+            Dictionary with database stats (user_count, score_count, storage_mb)
+            or None if SemanticMemory not available
+        """
+        if self.semantic_memory is None:
+            return None
+        
+        return self.semantic_memory.get_stats()
 
 
 # TODO: Implementation Checklist
@@ -258,3 +452,15 @@ class NarrativeScorerService:
 # [ ] Write unit tests (mocked LLM)
 # [ ] Write integration tests (live LLM, pending API key)
 # [ ] Update pipeline README with wrapper usage examples
+
+# Phase 3 - SemanticMemory Integration (GEO #105) ✅ COMPLETED
+# [x] Add SemanticMemory integration for cross-session statistics
+# [x] Implement score persistence (store_score after each scoring)
+# [x] Add user statistics retrieval (get_user_stats)
+# [x] Add user trend analysis (get_user_trend)
+# [x] Add percentile ranking (get_percentile_rank)
+# [x] Add calibration support (get/set_calibration_params)
+# [x] Write performance benchmarks (benchmarks/semantic_memory_benchmark.py)
+# [x] Validate performance targets (store_score <10ms, get_stats <5ms)
+# [ ] Write unit tests for SemanticMemory integration
+# [ ] Write integration tests (live scoring + persistence)

@@ -842,3 +842,27 @@ class SemanticMemory:
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+
+# === Singleton Helper ===
+
+_semantic_memory_instances: Dict[str, SemanticMemory] = {}
+
+
+def get_semantic_memory(db_path: Optional[str] = None) -> SemanticMemory:
+    """
+    Get or create a SemanticMemory singleton instance.
+    
+    Args:
+        db_path: Database path (default: "semantic_memory.db" in current directory)
+    
+    Returns:
+        SemanticMemory instance (singleton per db_path)
+    """
+    if db_path is None:
+        db_path = "semantic_memory.db"
+    
+    if db_path not in _semantic_memory_instances:
+        _semantic_memory_instances[db_path] = SemanticMemory(db_path=db_path)
+    
+    return _semantic_memory_instances[db_path]
