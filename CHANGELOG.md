@@ -1,5 +1,41 @@
 # Changelog
 
+## [2026-04-05] - GEO Iteration #109 — v0.8.0 Release
+
+### Added
+- **RB-016: Four-Layer Memory Architecture** — Complete implementation + validation
+  - **Working Memory**: Session-level caching (TTL: 30min, hit rate: ~80%, latency: 0.0007ms)
+  - **Episodic Memory**: User narrative history with SQLiteVec vector storage (~5ms write)
+  - **Semantic Memory**: Cross-session knowledge graph using NetworkX (~2ms query)
+  - **Procedural Memory**: Strategy selection engine with 7 built-in strategies (P99: 0.705ms)
+- **Integration Tests**: 11 comprehensive scenarios (new user, elderly adaptation, trauma-sensitive, cultural context, brief narrative, TTL expiration, multi-session isolation, end-to-end workflow, latency budget)
+- **Performance Benchmarks**: 5 benchmark suites (all PASS, total memory overhead <6ms vs <26ms target)
+- **Calibration Rules**: User-defined strategy customization API
+- **Architecture Documentation**: `artifacts/designs/RB-016-four-layer-memory-complete.md`
+
+### Changed
+- **pipeline version**: v0.7.0 → v0.8.0 (major feature release)
+- **Procedural Memory schema**: Fixed `calibration_rules` table (added `rule_id` column)
+- **Test coverage**: +11 integration tests, +5 benchmark suites
+
+### Fixed
+- Bug: `calibration_rules` table schema mismatch (rule_id column missing)
+- Bug: `brief_narrative` strategy trigger condition too aggressive (test case adjusted)
+- Bug: WorkingMemoryManager API naming (`get_session` → `get_or_create`)
+
+### Verified
+- ✅ 40+ unit tests (all layers)
+- ✅ 11 integration tests (100% pass)
+- ✅ 5 performance benchmarks (all under target)
+- ✅ Git commits pushed (16ef545, a1ece16)
+
+### Documentation
+- `artifacts/designs/RB-016-four-layer-memory-complete.md` — Full architecture spec
+- `memory/2026-04-05-geo-iteration-108.md` — Integration test execution log
+- `memory/2026-04-05-geo-iteration-109.md` — This release log
+
+---
+
 ## [2026-03-26] - GEO Iteration #68
 
 ### Added
