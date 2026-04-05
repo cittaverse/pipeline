@@ -486,6 +486,7 @@ class ProceduralMemory:
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS calibration_rules (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                rule_id TEXT UNIQUE NOT NULL,
                 user_id TEXT NOT NULL,
                 rule_type TEXT NOT NULL,
                 params_json TEXT NOT NULL,
