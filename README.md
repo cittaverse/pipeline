@@ -1,5 +1,7 @@
 # CittaVerse Narrative Assessment Pipeline 🧠
 
+> If this is useful, please star — it helps others discover it.
+
 > **全球首个开源的神经符号叙事评估引擎**
 > 
 > Neuro-symbolic pipeline for automated narrative quality assessment in elderly care
